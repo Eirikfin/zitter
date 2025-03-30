@@ -22,9 +22,9 @@ def createUser(db: Session, req):
         db.commit()
         db.refresh(newUser)
         return {"message": "User created successfully", "user": {"id": newUser.id, "username": newUser.username}}
-    except Exception as e:
+    except Exception as err:
         db.rollback()
-        print(f"Error creating user: {str(e)}")  # Log the error for debugging
-        raise HTTPException(status_code=400, detail=f"Error creating user: {str(e)}")
+        print(f"Error creating user: {str(err)}")  # Log the error for debugging
+        raise HTTPException(status_code=400, detail=f"Error creating user: {str(err)}")
 
 
