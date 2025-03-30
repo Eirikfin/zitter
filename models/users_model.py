@@ -13,7 +13,7 @@ class User(Base):
     password = Column(String(255), nullable=False)
     time_created = Column(DateTime, default=func.now())
 
-
+    # Relationship with Tweet
     tweets = relationship("Tweet", back_populates="user", cascade="all, delete")
 
     def __repr__(self):
