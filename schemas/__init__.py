@@ -1,1 +1,1 @@
-from schemas.user_validation import UserCreate
+from schemas.user_validation import UserCreate, UserUpdate

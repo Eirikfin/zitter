@@ -1,6 +1,11 @@
 from pydantic import BaseModel, EmailStr
+from typing import Optional
 
 class UserCreate(BaseModel):
     username: str
-    email: EmailStr  # ✅ Ensures valid email format
-    password: str  # ✅ Can add length validation later
+    email: EmailStr
+    password: str  
+
+class UserUpdate(BaseModel):
+    username: Optional[str] = None
+    email: Optional[EmailStr] = None

@@ -1,8 +1,9 @@
 from fastapi import FastAPI, Depends
 from typing import Union
 from sqlalchemy.orm import Session
-from controllers.users_controller import createUser
-from schemas import UserCreate
+from controllers.users_controller import createUser, updateUser
+from schemas import UserCreate, UserUpdate
+from models import User
 from config.db import SessionLocal
 
 app = FastAPI()
@@ -18,10 +19,12 @@ def get_db():
 
 #creating a new user:
 @app.post("/users")
-def register_user(req: UserCreate, db: Session = Depends(get_db)):
+def register_user( req: UserCreate, db: Session = Depends(get_db)):
     return createUser(db, req)
 
-
+@app.patch("/users/{username}")
+def update_user(username: str, req: UserUpdate,  db: Session = Depends(get_db)):
+    return updateUser(db, username, req)
 
 
 @app.get("/")
