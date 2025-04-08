@@ -96,7 +96,15 @@ def getUser(db: Session, username: str):
         result = {
             "id": user.id,
             "username": user.username,
-            "joined": user.time_created 
+            "joined": user.time_created,
+            "tweets": [
+                {
+                    "id": tweet.id,
+                    "message": tweet.message,
+                    "time_created": tweet.time_created
+                } for tweet in user.tweets
+            ]
+            
             #maybe join table with tweets and show tweets later?
         }
 
