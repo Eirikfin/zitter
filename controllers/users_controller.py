@@ -30,7 +30,7 @@ def createUser(db: Session, req):
 
 
 
-
+#update a user:
 def updateUser(db: Session, username: str, req: UserUpdate):
     
     try:
@@ -48,6 +48,12 @@ def updateUser(db: Session, username: str, req: UserUpdate):
         db.commit()
         db.refresh(user)
 
+        user = {
+            "username": user.username,
+            "email": user.email,
+            "joined": user.time_created
+        }
+
         return {"message": "User updated successfully", "user": user}
     except Exception as err:
         db.rollback()
@@ -55,7 +61,61 @@ def updateUser(db: Session, username: str, req: UserUpdate):
         raise HTTPException(status_code=400, detail=f"Error updating user: {str(err)}")
 
 
-
+#delete a user:
 def deleteUser(db: Session, username: str):
-    user = db.query(User).filter(User.username == username).first()
+    try:
+        #search db for username
+        user = db.query(User).filter(User.username == username).first()
+
+        #if no user is found:
+        if not user:
+            return {"message": "User not found"}
+
+        #remove user from data base and commit
+        db.delete(user)
+        db.commit()
+        
+        return {"message": "User has been deleted."}
+
+
+    except Exception as err:
+        db.rollback()
+        print(f"Error deleting user: {str(err)}")  # Log the error for debugging
+        raise HTTPException(status_code=400, detail=f"Error deleting user: {str(err)}")
     
+
+#get a user:
+def getUser(db: Session, username: str):
+    
+    try:
+        user = db.query(User).filter(User.username == username).first()
+
+        if not user:
+            return {"message": "User not found"}
+        
+        result = {
+            "id": user.id,
+            "username": user.username,
+            "joined": user.time_created 
+            #maybe join table with tweets and show tweets later?
+        }
+
+        return result
+    except Exception as err:
+        print(f"Error getting user: {str(err)}")
+        raise HTTPException(status_code=500, detail=f"Error getting user: {str(err)}")
+
+        
+    
+
+#get all users:
+
+def getAllUsers(db: Session):
+    users = db.query(User).all()
+
+    result = [
+        {"id": user.id, "username": user.username, "joined": user.time_created}
+        for user in users
+    ]
+
+    return result
