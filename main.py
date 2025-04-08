@@ -5,6 +5,9 @@ from controllers.users_controller import createUser, updateUser, deleteUser, get
 from schemas import UserCreate, UserUpdate
 from models import User
 from config.db import SessionLocal
+from schemas.tweet_schema import TweetResponse, TweetCreate
+from controllers.tweet_controller import create_tweet, get_tweet_by_id
+from fastapi import HTTPException
 
 app = FastAPI()
 
@@ -14,7 +17,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 
 #creating a new user:
@@ -39,12 +41,17 @@ def get_all_users(db: Session = Depends(get_db)):
     return getAllUsers(db)
 
 
-
-
 @app.get("/")
 def read_root():
     return "Zitter API is live!"
 
-@app.get("/tweets/{tweet_id}")
-def get_tweet(tweet_id: int, q: Union[str, None] = None):
-    return{ "tweet_id": tweet_id, "q": q}
+@app.get("/tweets/{tweet_id}", response_model=TweetResponse)
+def get_tweet(tweet_id: int):
+    tweet = get_tweet_by_id(tweet_id)
+    if not tweet:
+        raise HTTPException(status_code=404, detail="Tweet not found") 
+    return tweet
+
+@app.post("/tweets", response_model=TweetCreate)
+def post_tweet(tweet: TweetCreate):
+    return create_tweet(tweet)
