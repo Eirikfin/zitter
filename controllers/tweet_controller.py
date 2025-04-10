@@ -1,6 +1,8 @@
 from models.tweets_model import Tweet
 from config.db import SessionLocal
 from schemas.tweet_schema import TweetCreate
+from sqlalchemy.orm import Session
+from sqlalchemy import desc
 
 
 def create_tweet(tweet_data: TweetCreate): # tweet_data is the request body containing the tweet data and user ID
@@ -24,3 +26,15 @@ def get_tweet_by_id(tweet_id: int): # Get the tweet ID from the request
     tweet = db.query(Tweet).filter(Tweet.id == tweet_id).first() # Query the database for the tweet with the given ID
     db.close() # Close the session
     return tweet # Return the tweet object if found, otherwise return None
+
+#Get all tweets:
+def get_tweets(db: Session):
+    tweets = db.query(Tweet).order_by(desc(Tweet.id)).all()
+    result = [
+        {
+            "message": tweet.message,
+            "time_created": tweet.time_created,
+            "username": tweet.user.username
+        } for tweet in tweets]
+    
+    return result

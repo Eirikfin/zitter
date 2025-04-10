@@ -5,6 +5,12 @@
     border-radius: 8px;
     background-color: #fff;
     max-width: 700px;
+
+    & input {
+        border-radius: 10px;
+        padding: 0.4rem;
+        min-height: 75px;
+    }
 }
 
 .send_btn {
@@ -16,6 +22,7 @@
     background: skyblue;
     font-size: 1.5rem;
     opacity: 0.8;
+   
 
     &:hover{
         opacity: 1;
