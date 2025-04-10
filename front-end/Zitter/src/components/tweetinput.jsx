@@ -43,7 +43,7 @@ export default function TweetInput() {
           type="text"
           name="tweet"
           placeholder="What's happening?"
-          onChange={(e) => setTweet(e.target.value)}
+          onChange={(e) => {setTweet(e.target.value); console.log(e.target.value)}}
         ></input>
         <input className={styles.send_btn} type="submit" value="Post"></input>
       </form>

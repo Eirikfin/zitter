@@ -1,7 +1,8 @@
-from models import User
+from models import User, Tweet
 from datetime import datetime, timezone
 from schemas import UserUpdate
 from fastapi import Depends, HTTPException, APIRouter
+from sqlalchemy import desc
 from sqlalchemy.orm import Session
 import bcrypt 
 
@@ -84,15 +85,16 @@ def deleteUser(db: Session, username: str):
         raise HTTPException(status_code=400, detail=f"Error deleting user: {str(err)}")
     
 
-#get a user:
 def getUser(db: Session, username: str):
-    
     try:
         user = db.query(User).filter(User.username == username).first()
 
         if not user:
             return {"message": "User not found"}
-        
+
+        # Get tweets sorted by time_created in descending order directly in the query
+        tweets = db.query(Tweet).filter(Tweet.user_id == user.id).order_by(desc(Tweet.time_created)).all()
+
         result = {
             "id": user.id,
             "username": user.username,
@@ -102,10 +104,8 @@ def getUser(db: Session, username: str):
                     "id": tweet.id,
                     "message": tweet.message,
                     "time_created": tweet.time_created
-                } for tweet in user.tweets
+                } for tweet in tweets
             ]
-            
-            #maybe join table with tweets and show tweets later?
         }
 
         return result
