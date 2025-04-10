@@ -1,21 +1,45 @@
+import { useState, useEffect } from "react"
 import TweetCard from "../../components/tweetcard"
 import TweetInput from "../../components/tweetinput"
+
+
 export default function Dashboard(){
+const [data, setData] = useState([]);
+useEffect(() => {
+    const fetchData = async () => {
+        try{
+            const response = await fetch("http://localhost:8000/tweets/all");
+            const json = await response.json();
+            setData(json);
+        }catch(err){
+            console.log("Error fething tweets:", err);
+        }
+    }
+
+    fetchData();
+},[])
 
 
+console.log(data);
     return(
     <>
-    <TweetInput/>
+     <TweetInput/>
+    {
+        data.map((tweet, index) => {
+            return (
+                <TweetCard key={index} username={tweet.username} message={tweet.message} date={tweet.time_created} />
+            )
+        })
+    }
+
+   
     { //TODO: show username/userinfo
 
     //TODO:Textfield where user can post a tweet
 
     //TODO: a search field where user can search hashtags
     
-    //TODO: display all tweets
     }
-    <TweetCard username="ElonDust" tweet="hurr durr woke mind virus hurr durr" hashtags="#verysmart #imsofunny" date="08.04.2025"/>
-    <TweetCard username="NiceGuy" tweet="Hello :)" hashtags="#greeting #benice" date="08.04.2025"/>
-    </>
-    )
-}
+    
+    </> 
+    )}

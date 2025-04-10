@@ -1,9 +1,8 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
 from .users_model import User  # Import User to avoid circular dependency
-from sqlalchemy.ext.declarative import declarative_base
+from models.base import Base
 
-Base = declarative_base()
 
 class Tweet(Base):
     __tablename__ = "tweets"
