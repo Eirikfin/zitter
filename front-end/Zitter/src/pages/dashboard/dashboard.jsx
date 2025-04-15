@@ -35,8 +35,7 @@ console.log(data);
    
     { //TODO: show username/userinfo
 
-    //TODO:Textfield where user can post a tweet
-
+    
     //TODO: a search field where user can search hashtags
     
     }

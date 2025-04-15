@@ -15,6 +15,10 @@ export default function UserPage() {
         const response = await fetch(`http://localhost:8000/user/${username}`);
         const json = await response.json();
         setData(json);
+
+        if(!response.ok){
+            throw new Error("No user was found");
+        }
       } catch (err) {
         console.log("Error fetching data:", err);
       }
@@ -22,12 +26,11 @@ export default function UserPage() {
     fetchData();
   }, [username]);
 
-  console.log(data);
-
+ 
   return (
     <>
-      <h1>Hello, {data.username}</h1>
-      <p>You joined Zitter on: {data.joined ? new Date(data.joined).toLocaleDateString() : 'Loading...'}</p>
+      <h1>{data.username}</h1>
+      <p>Joined Zitter on: {data.joined ? new Date(data.joined).toLocaleDateString() : 'Loading...'}</p>
 
       <TweetInput />
 
