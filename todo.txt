@@ -1,18 +1,17 @@
 users:
-- update user
-- delete user
-- get user / users
+-search for user?
 
 tweets:
-- model for tweets
-- validation for tweets
+- validation for tweets + sending token with request in front-end
 - CRUD for tweets
+-edit tweets
+-search for tweets
 
 hashtags:
 - reg ex to find hashtags in tweet
 - model and table for hashtags
 -query 1-1 relation between hashtags and tweets
+-search for hashtags
 
 Login system:
-- sql query compare passwords (dehash)
-- generate token
+-front end: store token and use with requests
