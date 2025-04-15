@@ -2,9 +2,14 @@ from models import User
 from schemas import LoginRequest
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy.orm import Session
-import bcrypt 
+import bcrypt
+import os 
+from dotenv import load_dotenv
+from middleware import generate_token
 
+load_dotenv()
 
+secret_key = os.getenv("SECRET_KEY")
 
 def logInUser(db: Session, req: LoginRequest):
     #find the user in database using username:
@@ -18,5 +23,11 @@ def logInUser(db: Session, req: LoginRequest):
     #compare passwords
     if not bcrypt.checkpw(password_bytes, hashed_password_bytes):
         raise HTTPException(status_code=401, detail="Wrong password")
+    payload = {
+        "id": user.id,
+        "username": user.username
+    }
+    token = generate_token(payload, secret_key)
+    
     #if match return success message
-    return {"message": "Log In was successful!"}
+    return {"message": "Log In was successful!", "token": f"Bearer {token}"}

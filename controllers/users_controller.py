@@ -90,7 +90,7 @@ def getUser(db: Session, username: str):
         user = db.query(User).filter(User.username == username).first()
 
         if not user:
-            return {"message": "User not found"}
+           raise HTTPException(status_code=404, detail="No user was found")
 
         # Get tweets sorted by time_created in descending order directly in the query
         tweets = db.query(Tweet).filter(Tweet.user_id == user.id).order_by(desc(Tweet.time_created)).all()
