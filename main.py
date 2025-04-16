@@ -1,12 +1,12 @@
 from fastapi import FastAPI, Depends
 from typing import Union
 from sqlalchemy.orm import Session
-from controllers.users_controller import createUser, updateUser, deleteUser, getUser, getAllUsers
+from controllers.users_controller import createUser, updateUser, deleteUser, getUser, getAllUsers, searchUser
 from schemas import UserCreate, UserUpdate, LoginRequest
 from models import User
 from config.db import SessionLocal
 from schemas.tweet_schema import TweetResponse, TweetCreate
-from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets
+from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets, searchTweets
 from controllers.login_controller import logInUser
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -62,6 +62,10 @@ def get_user(username: str, db: Session = Depends(get_db)):
 def get_all_users(db: Session = Depends(get_db)):
     return getAllUsers(db)
 
+@app.get("/users/search")
+def search_users(query: str, db: Session = Depends(get_db)):
+    return searchUser(db, query)
+
 
 @app.get("/")
 def read_root():
@@ -70,6 +74,13 @@ def read_root():
 @app.get("/tweets/all")
 def getTweets(db: Session = Depends(get_db)):
     return get_tweets(db)
+
+
+@app.get("/tweets/search")
+def search_tweets(query: str, db: Session = Depends(get_db)):
+    return searchTweets(db, query)
+
+
 
 @app.get("/tweets/{tweet_id}", response_model=TweetResponse)
 def get_tweet(tweet_id: int):
@@ -83,3 +94,4 @@ def get_tweet(tweet_id: int):
 @app.post("/tweets", response_model=TweetCreate)
 def post_tweet(tweet: TweetCreate):
     return create_tweet(tweet)
+
