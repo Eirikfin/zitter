@@ -6,6 +6,7 @@ import TweetCard from "../../../components/tweetcard";
 export default function TweetResults(){
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(false);
     const { query } = useParams();
     const apiUrl = `http://localhost:8000/tweets/search?query=${query}`;
 
@@ -15,7 +16,9 @@ export default function TweetResults(){
             setIsLoading(true);
             const result = await fetch(apiUrl)
             if(!result.ok){
-                throw Error("Failed to fetch tweets")
+                setError(true);
+                setIsLoading(false);
+                throw Error("Failed to fetch tweets");
             }
             setData(await result.json());
             setIsLoading(false)
@@ -23,8 +26,22 @@ export default function TweetResults(){
         request();
     }, [apiUrl])
     
+
     if(isLoading){
-        return <p>loading...</p>
+        return ( 
+        <>
+        <h2>Tweets:</h2>
+        <p>loading...</p>
+        </>
+        )
+    }
+    if(error){
+        return( 
+        <>
+        <h2>Tweets:</h2>
+        <p>No tweets found</p>
+        </>
+        )
     }
 
     return (

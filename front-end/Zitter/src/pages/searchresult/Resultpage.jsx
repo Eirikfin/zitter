@@ -11,8 +11,7 @@ export default function ResultPage(){
         <UserResults/>
         <TweetResults/>
         {/* 
-           show accounts matching result:
-           Show tweets matching result:
+          
            Show tweet mathing hastag? (should this be different?):  
             */}
         </>

@@ -1,11 +1,11 @@
 users:
--search for user?
+
 
 tweets:
 - validation for tweets + sending token with request in front-end
 - CRUD for tweets
 -edit tweets
--search for tweets
+
 
 hashtags:
 - reg ex to find hashtags in tweet

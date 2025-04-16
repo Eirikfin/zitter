@@ -5,6 +5,8 @@ export default function UserResults(){
     const [isLoading, setIsLoading] = useState(false)
     //data from api
     const [data, setData] = useState([]);
+    
+    const [error, setError] = useState(false);
     //search query
     const { query } = useParams()
     //api call
@@ -17,6 +19,9 @@ useEffect(() => {
         //fetch data:
         const result = await fetch(apiUrl);
          if(!result.ok){
+            setError(true)
+            setIsLoading(false);
+            
              throw Error("Failed to fetch users")
          }
          setData(await result.json());
@@ -29,7 +34,21 @@ useEffect(() => {
 },[apiUrl]);
 
     if(isLoading){
-        return <p>Loading...</p>
+        return ( 
+        <>
+        <h2>Users:</h2>
+        <p>Loading...</p>
+        </>
+        )
+    }
+
+    if(error){
+        return ( 
+        <>
+        <h2>Users:</h2>
+        <p>No users was found</p>
+        </>
+        )
     }
 
     return (
