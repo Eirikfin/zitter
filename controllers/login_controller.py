@@ -30,4 +30,4 @@ def logInUser(db: Session, req: LoginRequest):
     token = generate_token(payload, secret_key)
     
     #if match return success message
-    return {"message": "Log In was successful!", "token": f"Bearer {token}"}
+    return {"message": "Log In was successful!", "id": user.id, "token": f"Bearer {token}"}
