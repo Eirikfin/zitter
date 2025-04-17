@@ -3,14 +3,21 @@ from typing import Union
 from sqlalchemy.orm import Session
 from controllers.users_controller import createUser, updateUser, deleteUser, getUser, getAllUsers
 from schemas import UserCreate, UserUpdate, LoginRequest
-from models import User
+
 from config.db import SessionLocal
+from config.db import engine
+from models.base import Base
+from models.users_model import User 
+from models.tweets_model import Tweet
+
 from schemas.tweet_schema import TweetResponse, TweetCreate
 from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets
 from controllers.login_controller import logInUser
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 
+
+Base.metadata.create_all(bind=engine)
 app = FastAPI()
 
 def get_db():

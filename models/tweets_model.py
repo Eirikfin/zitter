@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
-from .users_model import User  # Import User to avoid circular dependency
+from models.users_model import User
 from models.base import Base
 
 
