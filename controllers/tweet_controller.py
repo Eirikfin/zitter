@@ -3,6 +3,7 @@ from config.db import SessionLocal
 from schemas.tweet_schema import TweetCreate
 from sqlalchemy.orm import Session
 from sqlalchemy import desc
+from fastapi import Depends, HTTPException, APIRouter
 
 
 def create_tweet(tweet_data: TweetCreate): # tweet_data is the request body containing the tweet data and user ID
@@ -37,4 +38,22 @@ def get_tweets(db: Session):
             "username": tweet.user.username
         } for tweet in tweets]
     
+    return result
+
+
+def searchTweets(db: Session, query: str):
+    #query db for match with query matching message
+    tweets = db.query(Tweet).filter(Tweet.message.ilike(f"%{query}%")).all()
+    #if no result
+    if not tweets:
+         raise HTTPException(status_code=404, detail="no tweets were found")
+    #what to return to user:
+    result = [
+    {   
+        "id": tweet.id,
+        "message": tweet.message,
+        "time_created": tweet.time_created,
+        "username": tweet.user.username
+    } for tweet in tweets]
+
     return result
