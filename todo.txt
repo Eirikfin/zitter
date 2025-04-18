@@ -1,6 +1,5 @@
 users:
 
-
 tweets:
 - validation for tweets + sending token with request in front-end
 - CRUD for tweets

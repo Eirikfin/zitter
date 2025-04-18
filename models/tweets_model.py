@@ -13,6 +13,7 @@ class Tweet(Base):
     
     # Relationship to User
     user = relationship("User", back_populates="tweets")
+    hashtags = relationship("Hashtag", secondary="tweet_hashtags", back_populates="tweets")
     
     def __repr__(self):
         return f"<Tweet(id={self.id}, user_id={self.user_id}, message={self.message})>"
