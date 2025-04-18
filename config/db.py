@@ -15,8 +15,9 @@ DB_URL = os.getenv("DATABASE_URL")
 if not DB_URL:
     raise ValueError("DATABASE_URL is not set in the environment or .env file")
 
-# Create engine
-engine = create_engine(DB_URL, connect_args={"check_same_thread": False})  # for SQLite
+connect_args = {"check_same_thread": False} if DB_URL.startswith("sqlite") else {}
+
+engine = create_engine(DB_URL, connect_args=connect_args)
 
 # Create session
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))

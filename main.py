@@ -8,7 +8,7 @@ from config.db import engine
 from models.base import Base
 
 from schemas.tweet_schema import TweetResponse, TweetCreate
-from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets, searchTweets
+from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets, search_tweets, get_hashtags
 from controllers.login_controller import logInUser
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -23,7 +23,6 @@ def get_db():
         yield db
     finally:
         db.close()
-
 
 #Cors config:
 origins = [
@@ -82,8 +81,8 @@ def getTweets(db: Session = Depends(get_db)):
     return get_tweets(db)
 
 @app.get("/tweets/search")
-def search_tweets(query: str, db: Session = Depends(get_db)):
-    return searchTweets(db, query)
+def search(query: str, db: Session = Depends(get_db)):
+    return search_tweets(db, query)
 
 @app.get("/tweets/{tweet_id}", response_model=TweetResponse)
 def get_tweet(tweet_id: int):
