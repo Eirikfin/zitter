@@ -1,5 +1,6 @@
 import React, {useState} from "react";
 import { useNavigate } from "react-router-dom";
+import styles from "./login.module.scss"
 
 export default function LoginPage(){
   const [username, setUsername] = useState("");
@@ -36,25 +37,31 @@ export default function LoginPage(){
   };
 
   return (
-    <div>
-      <h2>Login</h2>
-      <form onSubmit={handleLogin}>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        /><br />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        /><br />
-        <button type="submit">Log In</button>
-      </form>
-      {error && <p style={{ color: "red" }}>{error}</p>}
+    <div className={styles.wrapper}>
+      <div className={styles.card}>
+        <h2 className={styles.title}>Login to Zitter</h2>
+        <form onSubmit={handleLogin} className={styles.form}>
+          <input
+            className={styles.input}
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <input
+            className={styles.input}
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <button type="submit" className={styles.button}>
+            Log In
+          </button>
+        </form>
+        {error && <p className={styles.error}>{error}</p>}
+      </div>
     </div>
-  );
+  );  
 }
 
