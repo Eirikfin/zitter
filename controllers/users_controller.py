@@ -127,3 +127,16 @@ def getAllUsers(db: Session):
     ]
 
     return result
+
+
+#search for users:
+def searchUser(db: Session, query: str):
+    users = db.query(User).filter(User.username.ilike(f"%{query}%")).all()
+    if not users:
+        raise HTTPException(status_code=404, detail="no users was found")
+    result = [
+        {"id": user.id, "username": user.username, "joined": user.time_created}
+        for user in users
+    ]
+
+    return result
