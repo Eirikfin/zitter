@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react"
 import TweetCard from "../../components/tweetcard"
 import TweetInput from "../../components/tweetinput"
+import SearchBar from "../../components/SearchBar/SearchBar";
 
 
 export default function Dashboard(){
@@ -37,7 +38,7 @@ console.log(data);
 
     
     //TODO: a search field where user can search hashtags
-    
+    <SearchBar/>
     }
     
     </> 

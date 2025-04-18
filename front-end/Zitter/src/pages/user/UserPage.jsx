@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import TweetCard from '../../components/tweetcard';
 import TweetInput from '../../components/tweetinput';
+import SearchBar from "../../components/SearchBar/SearchBar";
 
 export default function UserPage() {
   // States:
@@ -33,6 +34,7 @@ export default function UserPage() {
       <p>Joined Zitter on: {data.joined ? new Date(data.joined).toLocaleDateString() : 'Loading...'}</p>
 
       <TweetInput />
+      <SearchBar/>
 
       {/* check if there are any tweets to display: */}
       {data.tweets && data.tweets.length > 0 ? (
