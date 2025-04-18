@@ -1,0 +1,24 @@
+.SearchContainer{
+    border: 1px solid #000000;
+    display: flex;
+    padding: 1rem;
+    gap: 8px;
+}
+
+.input{
+    padding: 8px;
+    flex: 1;
+}
+
+.button{
+    background-color: skyblue;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.button:hover{
+    background-color: rgb(109, 160, 181);
+}
