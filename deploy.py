@@ -11,10 +11,7 @@ print("Attempting to create tables...")
 
 try:
     # Attempt to create the table
-    User.__table__.create(bind=engine)  # This should create the table
-    Tweet.__table__.create(bind=engine)
-    TweetHashtag.__table__.create(bind=engine)
-    Hashtag.__table__.create(bind=engine)
+    Base.metadata.create_all(engine)
     print("✅ Tables created!")
 
     # Optionally, print the User model to verify it's imported correctly
