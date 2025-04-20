@@ -32,8 +32,10 @@ body {
 
 .center {
   grid-area: 1 / 2 / 2 / 3;
+  border-left: 1px solid #ffffff38;
+  border-right: 1px solid #ffffff38;
   .head {
-    border-bottom: 1px solid #fff;
+    border-bottom: 1px solid #ffffff38;
     padding: 1rem 0;
     h2 {
       line-height: 1.5rem;

@@ -1,9 +1,10 @@
-from sqlalchemy import Column, Integer, ForeignKey
+# models/tweet_hashtag_model.py
+from sqlalchemy import Table, Column, Integer, ForeignKey
 from models.base import Base
 
-
-class TweetHashtag(Base):
-    __tablename__ = "hashtagstweets"
-    id = Column(Integer, primary_key=True, index=True)
-    tweet_id = Column(Integer, ForeignKey("tweets.id"), primary_key=True)
-    hashtag_id = Column(Integer, ForeignKey("hashtags.id"), primary_key=True)
+tweet_hashtags = Table(
+    "tweet_hashtags",
+    Base.metadata,
+    Column("tweet_id", Integer, ForeignKey("tweets.id")),
+    Column("hashtag_id", Integer, ForeignKey("hashtags.id")),
+)
