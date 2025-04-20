@@ -1,7 +1,7 @@
 import re
 from sqlalchemy import func, or_, desc
 from sqlalchemy.orm import joinedload
-from models import Tweet, Hashtag
+from models import Tweet, Hashtag, User
 from config.db import SessionLocal
 from schemas.tweet_schema import TweetCreate
 from sqlalchemy.orm import Session
@@ -10,7 +10,6 @@ from sqlalchemy.orm import Session
 # Utility to extract hashtags
 def extract_hashtags(text: str):
     return set(re.findall(r"#(\w+)", text))  # Extract words after #
-
 
 # Create a new tweet
 def create_tweet(tweet_data: TweetCreate):
