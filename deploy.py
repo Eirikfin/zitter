@@ -1,5 +1,5 @@
-from config.db import engine
-from models import *
+from config.db import engine, Base
+from models import User, Tweet, Hashtag, TweetHashtag
 import logging
 
 # Set up logging to show SQLAlchemy SQL queries
@@ -11,7 +11,10 @@ print("Attempting to create tables...")
 
 try:
     # Attempt to create the table
-    Base.metadata.create_all(engine)
+    User.__table__.create(bind=engine)  # This should create the table
+    Tweet.__table__.create(bind=engine)
+    Hashtag.__table__.create(bind=engine)
+
     print("✅ Tables created!")
 
     # Optionally, print the User model to verify it's imported correctly
@@ -20,4 +23,3 @@ try:
 except Exception as e:
     # If there’s an error during table creation, it will print here
     print(f"❌ Error creating tables: {str(e)}")
-
