@@ -2,6 +2,7 @@ import TweetCard from './components/tweetcard'
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Dashboard from './pages/dashboard/dashboard';
 import UserPage from './pages/user/UserPage';
+import ResultPage from './pages/searchresult/Resultpage';
 
 import LoginPage from './pages/login/LoginPage';
 

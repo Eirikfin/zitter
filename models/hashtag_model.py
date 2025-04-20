@@ -3,8 +3,7 @@ from sqlalchemy.orm import relationship
 from models.base import Base
 
 class Hashtag(Base):
-    __tablename__ = "hashtags"
-
+    __tablename__ = "tweet_hashtags"
     id = Column(Integer, primary_key=True, index=True)
     text = Column(String, index=True, unique=True)
 

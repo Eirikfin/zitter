@@ -1,9 +1,7 @@
 import re
 from sqlalchemy import func, or_, desc
 from sqlalchemy.orm import joinedload
-from models.tweets_model import Tweet
-from models.users_model import User
-from models.hashtag_model import Hashtag
+from models import Tweet, Hashtag
 from config.db import SessionLocal
 from schemas.tweet_schema import TweetCreate
 from sqlalchemy.orm import Session
@@ -75,16 +73,14 @@ def get_tweets(db: Session, limit: int = 50, offset: int = 0):
 
 # Search tweets by message, username, or hashtag
 def search_tweets(search_query: str, db: Session, limit: int = 50, offset: int = 0):
-    ts_query = func.plainto_tsquery('english', search_query)
-
     query = db.query(Tweet).join(User).outerjoin(Tweet.hashtags).options(
         joinedload(Tweet.user),
         joinedload(Tweet.hashtags)
     ).filter(
         or_(
-            func.to_tsvector('english', Tweet.message).op('@@')(ts_query),
-            func.lower(User.username).like(f"%{search_query.lower()}%"),
-            func.lower(Hashtag.text).like(f"%{search_query.lower()}%")
+            Tweet.message.like(f"%{search_query}%"),
+            User.username.like(f"%{search_query}%"),
+            Hashtag.text.like(f"%{search_query}%")
         )
     ).order_by(desc(Tweet.id)).limit(limit).offset(offset)
 
