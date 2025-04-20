@@ -1,23 +1,14 @@
-import React, { useState, useContext } from 'react'
-import { GlobalContext } from '../context/GlobalState';
+import styles from "./style.module.scss"
+import {Route, Link} from "react-router-dom";
 
-export const NewTweet = () => {
-    const [content, setContent] = useState('');
-    const { addTweet } = useContext(GlobalContext);
-    const handleNewTweet = () => addTweet(content);
+export default function TweetCard(props){
 
-    return (
-        <div className="new-tweet">
-            <div className="right">
-                <div className="flex-align-center">
-                    <input className="w-100" placeholder="What's happening?" type="text" onChange={(event) => setContent(event.target.value)} />
-                </div>
-                <div className="new-tweet-options">
-                    <div className="tweet" onClick={handleNewTweet}>
-                        <div className="btn tweet-btn text-center">Tweet</div>
-                    </div>
-                </div>
-            </div>
+
+    return(
+        <div className={styles.tweetcard}>
+          <Link to={`/user/${props.username}`}><h3>{props.username}</h3></Link>
+           <p>{props.message}</p> 
+           <p>{props.date}</p> 
         </div>
     )
 }
