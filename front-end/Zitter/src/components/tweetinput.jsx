@@ -12,7 +12,6 @@ export default function TweetInput() {
     try {
     //request to send to server:
       const request = {
-        user_id: 1, //replace with userid later
         message: tweet, //tweet to be submitted
       };
       //API call
@@ -20,6 +19,7 @@ export default function TweetInput() {
         method: "POST",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
+          "Authorization": localStorage.getItem('token')
         },
         body: JSON.stringify(request), //send the request in body
       });
