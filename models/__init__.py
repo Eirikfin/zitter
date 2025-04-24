@@ -3,4 +3,4 @@ from .users_model import User
 from .tweets_model import Tweet
 from .base import Base
 
-__all__ = ["User", "Tweet", "Hashtag", "TweetHashtag", "Base"]
+__all__ = ["User", "Tweet", "Hashtag", "Base"]

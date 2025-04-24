@@ -82,7 +82,7 @@ def getTweets(db: Session = Depends(get_db)):
 
 @app.get("/tweets/search")
 def search(query: str, db: Session = Depends(get_db)):
-    return search_tweets(db, query)
+    return search_tweets(query, db)
 
 @app.get("/tweets/{tweet_id}", response_model=TweetResponse)
 def get_tweet(tweet_id: int):
