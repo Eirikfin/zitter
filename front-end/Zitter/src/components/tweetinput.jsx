@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./style.module.scss";
+import styles from "./tweetInput.module.scss";
 
 export default function TweetInput() {
   //states:
