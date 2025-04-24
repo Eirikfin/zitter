@@ -1,10 +1,14 @@
 .tweetcard {
-    border: 1px solid #ddd;
+    border: 1px solid #000000;
     padding: 1rem;
     margin-bottom: 1rem;
     border-radius: 8px;
     background-color: #fff;
-    max-width: 700px;
+    max-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
 
     & input {
         border-radius: 10px;
@@ -14,15 +18,13 @@
 }
 
 .send_btn {
-    margin-left: 20px;
-    border: none;
-    border-radius: 20px;
-    padding: 0.6rem;
+    cursor: pointer;
+    background-color: #1da1f2;
     color: white;
-    background: skyblue;
-    font-size: 1.5rem;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
     opacity: 0.8;
-   
 
     &:hover{
         opacity: 1;
