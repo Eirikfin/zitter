@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
 from sqlalchemy.orm import Session
 from controllers.users_controller import createUser, updateUser, deleteUser, getUser, getAllUsers, searchUser
 from schemas import UserCreate, UserUpdate, LoginRequest
@@ -12,12 +12,16 @@ from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_twee
 from controllers.login_controller import logInUser
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+http_bearer = HTTPBearer()
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
+def get_token_from_header(authorization: str = Depends(http_bearer)):
+    token = authorization.credentials
+    return token
 
 def get_db():
     db = SessionLocal()
@@ -95,6 +99,5 @@ def get_tweet(tweet_id: int):
     return tweet
 
 @app.post("/tweets", response_model=TweetCreate)
-def post_tweet(tweet: TweetCreate, token: str = Depends(oauth2_scheme)):
+def post_tweet(tweet: TweetCreate, token: str = Depends(get_token_from_header)):
     return create_tweet(tweet, token)
-
