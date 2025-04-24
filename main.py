@@ -77,12 +77,12 @@ def read_root():
     return "Zitter API is live!"
 
 @app.get("/tweets/all")
-def getTweets(db: Session = Depends(get_db)):
-    return get_tweets(db)
+def getTweets(limit: int = 50, offset: int = 0, db: Session = Depends(get_db)):
+    return get_tweets(db, limit=limit, offset=offset)
 
 @app.get("/tweets/search")
-def search(query: str, db: Session = Depends(get_db)):
-    return search_tweets(db, query)
+def search_tweets_endpoint(query: str, db: Session = Depends(get_db)):
+    return search_tweets(query, db)
 
 @app.get("/tweets/{tweet_id}", response_model=TweetResponse)
 def get_tweet(tweet_id: int):

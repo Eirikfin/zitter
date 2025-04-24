@@ -12,11 +12,11 @@ def extract_hashtags(text: str):
     return set(re.findall(r"#(\w+)", text))  # Extract words after #
 
 # Create a new tweet
-def create_tweet(tweet_data: TweetCreate):
+def create_tweet(tweet_data: TweetCreate, user_id: int):
     db = SessionLocal()
     try:
         new_tweet = Tweet(
-            user_id=tweet_data.user_id,
+            user_id=tweet_data.userid,
             message=tweet_data.message,
         )
 

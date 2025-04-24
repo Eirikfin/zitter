@@ -4,8 +4,8 @@ from typing import Optional
 
 # Tweet schema for creating a new tweet
 class TweetCreate(BaseModel):
-    user_id: int
     message: str
+    userid: int
     
 # Tweet schema for the response
 class TweetResponse(BaseModel):
