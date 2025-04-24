@@ -84,11 +84,7 @@ def getTweets(limit: int = 50, offset: int = 0, db: Session = Depends(get_db)):
     return get_tweets(db, limit=limit, offset=offset)
 
 @app.get("/tweets/search")
-<<<<<<< HEAD
 def search(query: str, db: Session = Depends(get_db)):
-=======
-def search_tweets_endpoint(query: str, db: Session = Depends(get_db)):
->>>>>>> b7f29fb6ef82814557da178243964b671ddddd84
     return search_tweets(query, db)
 
 @app.get("/tweets/{tweet_id}", response_model=TweetResponse)
