@@ -9,7 +9,7 @@ const [data, setData] = useState([]);
 useEffect(() => {
     const fetchData = async () => {
         try{
-            const response = await fetch("http://localhost:8000/tweets/all");
+            const response = await fetch("https://zitter.onrender.com/tweets/all");
             const json = await response.json();
             setData(json);
         }catch(err){

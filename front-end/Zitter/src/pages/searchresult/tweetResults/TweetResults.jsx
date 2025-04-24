@@ -8,7 +8,7 @@ export default function TweetResults(){
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(false);
     const { query } = useParams();
-    const apiUrl = `http://localhost:8000/tweets/search?query=${query}`;
+    const apiUrl = `https://zitter.onrender.com/tweets/search?query=${query}`;
 
 
     useEffect(() => {

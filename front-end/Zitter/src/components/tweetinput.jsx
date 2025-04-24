@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./style.module.scss";
+import styles from "./tweetInput.module.scss";
 
 export default function TweetInput() {
   //states:
@@ -15,7 +15,8 @@ export default function TweetInput() {
         message: tweet, //tweet to be submitted
       };
       //API call
-      const response = await fetch("http://localhost:8000/tweets", {
+    
+      const response = await fetch("https://zitter.onrender.com/tweets", {
         method: "POST",
         headers: {
           "Content-type": "application/json; charset=UTF-8",
