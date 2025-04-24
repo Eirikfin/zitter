@@ -12,6 +12,9 @@ from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_twee
 from controllers.login_controller import logInUser
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import OAuth2PasswordBearer
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
@@ -92,6 +95,6 @@ def get_tweet(tweet_id: int):
     return tweet
 
 @app.post("/tweets", response_model=TweetCreate)
-def post_tweet(tweet: TweetCreate):
-    return create_tweet(tweet)
+def post_tweet(tweet: TweetCreate, token: str = Depends(oauth2_scheme)):
+    return create_tweet(tweet, token)
 

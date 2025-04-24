@@ -5,18 +5,26 @@ from models import Tweet, Hashtag, User
 from config.db import SessionLocal
 from schemas.tweet_schema import TweetCreate
 from sqlalchemy.orm import Session
+from middleware import decode_token
+from dotenv import load_dotenv
+import os
 
+load_dotenv()
+
+secret_key = os.getenv("SECRET_KEY")
 
 # Utility to extract hashtags
 def extract_hashtags(text: str):
     return set(re.findall(r"#(\w+)", text))  # Extract words after #
 
 # Create a new tweet
-def create_tweet(tweet_data: TweetCreate, user_id: int):
+def create_tweet(tweet_data: TweetCreate, token:str ):
     db = SessionLocal()
+    payload = decode_token(token)
+    user_id = payload.get("user_id")
     try:
         new_tweet = Tweet(
-            user_id=tweet_data.userid,
+            user_id=user_id,
             message=tweet_data.message,
         )
 
