@@ -13,7 +13,7 @@ export default function UserPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`http://localhost:8000/user/${username}`);
+        const response = await fetch(`https://zitter.onrender.com/user/${username}`);
         const json = await response.json();
         setData(json);
 
