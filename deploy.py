@@ -1,5 +1,7 @@
 from config.db import engine, Base
-from models import User, Tweet, Hashtag, TweetHashtag
+from models import User, Tweet, Hashtag
+from models.tweet_hashtag_model import tweet_hashtags
+
 import logging
 
 # Set up logging to show SQLAlchemy SQL queries
@@ -11,9 +13,11 @@ print("Attempting to create tables...")
 
 try:
     # Attempt to create the table
+    Base.metadata.create_all(bind=engine)
+
     #User.__table__.create(bind=engine)  # This should create the table
     #Tweet.__table__.create(bind=engine)
-    Hashtag.__table__.create(bind=engine)
+    #Hashtag.__table__.create(bind=engine)
 
     print("✅ Tables created!")
 
