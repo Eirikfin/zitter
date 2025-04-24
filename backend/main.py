@@ -33,9 +33,7 @@ def get_db():
 
 #Cors config:
 origins = [
-    "http://localhost:5174",
-    "http://localhost:3000",
-    "http://localhost:5173",
+    "https://zitter-six.vercel.app/"
 ]
 app.add_middleware(
     CORSMiddleware,
