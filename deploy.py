@@ -11,8 +11,8 @@ print("Attempting to create tables...")
 
 try:
     # Attempt to create the table
-    User.__table__.create(bind=engine)  # This should create the table
-    Tweet.__table__.create(bind=engine)
+    #User.__table__.create(bind=engine)  # This should create the table
+    #Tweet.__table__.create(bind=engine)
     Hashtag.__table__.create(bind=engine)
 
     print("✅ Tables created!")
