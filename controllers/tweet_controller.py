@@ -20,8 +20,9 @@ def extract_hashtags(text: str):
 # Create a new tweet
 def create_tweet(tweet_data: TweetCreate, token:str ):
     db = SessionLocal()
-    payload = decode_token(token)
-    user_id = payload.get("user_id")
+    payload = decode_token(token, secret_key)
+    user_id = payload["id"]
+    print(user_id)
     try:
         new_tweet = Tweet(
             user_id=user_id,

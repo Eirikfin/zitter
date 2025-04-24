@@ -2,11 +2,13 @@ from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
 
+class TweetCreate(BaseModel):
+    message: str
+
 # Tweet schema for creating a new tweet
 class TweetCreate(BaseModel):
     message: str
-    userid: int
-    
+
 # Tweet schema for the response
 class TweetResponse(BaseModel):
     id: int
