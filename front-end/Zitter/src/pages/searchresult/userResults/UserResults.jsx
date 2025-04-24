@@ -10,7 +10,7 @@ export default function UserResults(){
     //search query
     const { query } = useParams()
     //api call
-    const apiUrl = `http://localhost:8000/users/search?query=${query}`;
+    const apiUrl = `https://zitter.onrender.com/users/search?query=${query}`;
 //to do add apiurl when it is complete:
 useEffect(() => {
     const request = async () => {
