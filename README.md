@@ -1,9 +1,1 @@
-Hello :)
-
-
-
-Install
-pip install -r requirements.txt
-
-Make requirements.txt.
-pip freeze -r requirements.txt 
+This is a obligatory project for the Course IDG2001 Cloud Technologies at NTNU
