@@ -38,16 +38,19 @@ export default function TweetInput() {
 
   return (
     <>
-      <form className={styles.tweetcard} onSubmit={postTweet}>
-        <label>Your Tweet:</label>
-        <input
-          type="text"
-          name="tweet"
-          placeholder="What's happening?"
-          onChange={(e) => {setTweet(e.target.value); console.log(e.target.value)}}
-        ></input>
-        <input className={styles.send_btn} type="submit" value="Post"></input>
-      </form>
+  <div className={styles.wrapper}>
+    <form className={styles.tweetcard} onSubmit={postTweet}>
+      <label>Your Tweet:</label>
+      <textarea
+        className={styles.textarea}
+        placeholder="What's happening?"
+        value={tweet}
+        onChange={(e) => setTweet(e.target.value)}
+        rows={3}
+      />
+      <input className={styles.send_btn} type="submit" value="Post" />
+    </form>
+  </div>
     </>
   );
 }
