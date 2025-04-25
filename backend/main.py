@@ -31,16 +31,15 @@ def get_db():
     finally:
         db.close()
 
-#Cors config:
-origins = [
-    "https://zitter-six.vercel.app/"
-]
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "https://zitter-six.vercel.app",
+        "http://localhost:3000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 #log in:
