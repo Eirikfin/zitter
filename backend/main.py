@@ -2,7 +2,7 @@ from fastapi import FastAPI, Depends, Request
 from sqlalchemy.orm import Session
 from controllers.users_controller import createUser, updateUser, deleteUser, getUser, getAllUsers, searchUser
 from schemas import UserCreate, UserUpdate, LoginRequest
-
+from controllers.log_controller import getLogs
 from config.db import SessionLocal
 from config.db import engine
 from models.base import Base
@@ -13,11 +13,17 @@ from controllers.login_controller import logInUser
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from middleware import log_requests
+
+
 
 http_bearer = HTTPBearer()
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
+
+
+
 
 def get_token_from_header(authorization: str = Depends(http_bearer)):
     token = authorization.credentials
@@ -41,6 +47,8 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.middleware("http")(log_requests)
 
 #log in:
 @app.post("/login")
@@ -98,3 +106,10 @@ def get_tweet(tweet_id: int):
 @app.post("/tweets", response_model=TweetCreate)
 def post_tweet(tweet: TweetCreate, token: str = Depends(get_token_from_header)):
     return create_tweet(tweet, token)
+
+@app.get("/logs")
+def returnLogs():
+    return getLogs()
+
+
+

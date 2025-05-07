@@ -1,0 +1,11 @@
+GET /docs
+GET /openapi.json
+GET /users
+POST /users
+GET /docs
+GET /openapi.json
+GET /logs
+GET /docs
+GET /openapi.json
+GET /logs
+GET /logs
