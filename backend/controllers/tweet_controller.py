@@ -1,4 +1,5 @@
 import re
+import json
 from sqlalchemy import func, or_, desc
 from sqlalchemy.orm import joinedload
 from models import Tweet, Hashtag, User
@@ -8,21 +9,26 @@ from sqlalchemy.orm import Session
 from middleware import decode_token
 from dotenv import load_dotenv
 import os
+import aioredis
+import asyncio
 
 load_dotenv()
 
 secret_key = os.getenv("SECRET_KEY")
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379")
+
+# Initialize Redis connection
+redis = aioredis.from_url(redis_url, decode_responses=True)
 
 # Utility to extract hashtags
 def extract_hashtags(text: str):
     return set(re.findall(r"#(\w+)", text))  # Extract words after #
 
 # Create a new tweet
-def create_tweet(tweet_data: TweetCreate, token:str ):
+def create_tweet(tweet_data: TweetCreate, token: str):
     db = SessionLocal()
     payload = decode_token(token, secret_key)
     user_id = payload["id"]
-    print(user_id)
     try:
         new_tweet = Tweet(
             user_id=user_id,
@@ -47,6 +53,11 @@ def create_tweet(tweet_data: TweetCreate, token:str ):
 
         db.commit()
         db.refresh(new_tweet)
+
+        # Invalidate cache for tweets and hashtags
+        asyncio.create_task(redis.delete("tweets"))
+        asyncio.create_task(redis.delete("hashtags"))
+
         return new_tweet
 
     except Exception as e:
@@ -57,15 +68,38 @@ def create_tweet(tweet_data: TweetCreate, token:str ):
 
 
 # Retrieve a tweet by ID
-def get_tweet_by_id(tweet_id: int):
+async def get_tweet_by_id(tweet_id: int):
+    cache_key = f"tweet:{tweet_id}"
+    cached_tweet = await redis.get(cache_key)
+
+    if cached_tweet:
+        return json.loads(cached_tweet)
+
     db = SessionLocal()
     tweet = db.query(Tweet).filter(Tweet.id == tweet_id).first()
     db.close()
-    return tweet
+
+    if tweet:
+        tweet_data = {
+            "id": tweet.id,
+            "message": tweet.message,
+            "time_created": tweet.time_created,
+            "username": tweet.user.username,
+        }
+        await redis.set(cache_key, json.dumps(tweet_data), ex=3600)  # Cache for 1 hour
+        return tweet_data
+
+    return None
 
 
 # Get all tweets with pagination
-def get_tweets(db: Session, limit: int = 50, offset: int = 0):
+async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
+    cache_key = f"tweets:{limit}:{offset}"
+    cached_tweets = await redis.get(cache_key)
+
+    if cached_tweets:
+        return json.loads(cached_tweets)
+
     tweets = db.query(Tweet).options(joinedload(Tweet.user)).order_by(desc(Tweet.id)).limit(limit).offset(offset).all()
     result = [
         {
@@ -76,11 +110,19 @@ def get_tweets(db: Session, limit: int = 50, offset: int = 0):
         }
         for tweet in tweets
     ]
+
+    await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
     return result
 
 
 # Search tweets by message, username, or hashtag
-def search_tweets(search_query: str, db: Session, limit: int = 50, offset: int = 0):
+async def search_tweets(search_query: str, db: Session, limit: int = 50, offset: int = 0):
+    cache_key = f"search_tweets:{search_query}:{limit}:{offset}"
+    cached_tweets = await redis.get(cache_key)
+
+    if cached_tweets:
+        return json.loads(cached_tweets)
+
     query = db.query(Tweet).join(User).outerjoin(Tweet.hashtags).options(
         joinedload(Tweet.user),
         joinedload(Tweet.hashtags)
@@ -104,10 +146,21 @@ def search_tweets(search_query: str, db: Session, limit: int = 50, offset: int =
         }
         for tweet in tweets
     ]
+
+    await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
     return result
 
 
 # Get all hashtags with pagination
-def get_hashtags(db: Session, limit: int = 50, offset: int = 0):
+async def get_hashtags(db: Session, limit: int = 50, offset: int = 0):
+    cache_key = f"hashtags:{limit}:{offset}"
+    cached_hashtags = await redis.get(cache_key)
+
+    if cached_hashtags:
+        return json.loads(cached_hashtags)
+
     tags = db.query(Hashtag).order_by(Hashtag.text.asc()).limit(limit).offset(offset).all()
-    return [{"id": tag.id, "text": tag.text} for tag in tags]
+    result = [{"id": tag.id, "text": tag.text} for tag in tags]
+
+    await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
+    return result
