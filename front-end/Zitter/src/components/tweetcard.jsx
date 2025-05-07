@@ -1,4 +1,4 @@
-import styles from "./style.module.scss"
+import styles from "./tweetCard.module.scss"
 import {Route, Link} from "react-router-dom";
 
 export default function TweetCard(props){

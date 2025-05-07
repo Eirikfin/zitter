@@ -1,0 +1,41 @@
+.tweetcard {
+    border: 1px solid #fdfdfd;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    background-color: #fff;
+    max-width: 500px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.textarea {
+    border: none;
+    resize: none;
+    font-size: 1rem;
+    min-height: 80px;
+    padding: 0.5rem;
+    border-radius: 10px;
+    background: #f5f8fa;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+
+.send_btn {
+    cursor: pointer;
+    background-color: #1da1f2;
+    color: white;
+    padding: 6px 16px; // Smaller padding
+    font-size: 0.95rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 999px; // Pill shape like Twitter
+    opacity: 0.9;
+    transition: all 0.2s ease;
+    &:hover{
+        opacity: 1;
+    }
+}

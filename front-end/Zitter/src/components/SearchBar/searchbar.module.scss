@@ -1,8 +1,6 @@
-.SearchContainer{
-    border: 1px solid #000000;
+.searchContainer{
     display: flex;
     padding: 1rem;
-    gap: 8px;
 }
 
 .input{
@@ -11,7 +9,7 @@
 }
 
 .button{
-    background-color: skyblue;
+    background-color: #1da1f2;
     color: white;
     padding: 8px 10px;
     border: none;
