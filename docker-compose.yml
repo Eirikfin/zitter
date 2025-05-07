@@ -1,10 +1,8 @@
-version: '3.8'
-
 services:
   app1:
     build: ./backend
     environment:
-      - DATABASE_URL=mysql+pymysql://root:F6l8cwIxp3Cb@127.0.0.1:3306/cloudoblig
+      - DATABASE_URL=postgresql://zitter_user:rS8pJRd09meY0FtIPF8HQziOVYIZgUt0@dpg-d053ih6uk2gs73e7pomg-a.frankfurt-postgres.render.com/zitter  
       - SECRET_KEY=hamburgerdressing
       - REDIS_URL=redis://localhost:6379
     ports:
@@ -13,7 +11,7 @@ services:
   app2:
     build: ./backend
     environment:
-      - DATABASE_URL=mysql+pymysql://root:F6l8cwIxp3Cb@127.0.0.1:3306/cloudoblig
+      - DATABASE_URL=postgresql://zitter_user:rS8pJRd09meY0FtIPF8HQziOVYIZgUt0@dpg-d053ih6uk2gs73e7pomg-a.frankfurt-postgres.render.com/zitter
       - SECRET_KEY=hamburgerdressing
       - REDIS_URL=redis://localhost:6379
     ports:
@@ -22,7 +20,7 @@ services:
   app3:
     build: ./backend
     environment:
-      - DATABASE_URL=mysql+pymysql://root:F6l8cwIxp3Cb@127.0.0.1:3306/cloudoblig
+      - DATABASE_URL=postgresql://zitter_user:rS8pJRd09meY0FtIPF8HQziOVYIZgUt0@dpg-d053ih6uk2gs73e7pomg-a.frankfurt-postgres.render.com/zitter
       - SECRET_KEY=hamburgerdressing
       - REDIS_URL=redis://localhost:6379
     ports:
