@@ -77,6 +77,7 @@ async def get_tweet_by_id(tweet_id: int):
 
     db = SessionLocal()
     tweet = db.query(Tweet).filter(Tweet.id == tweet_id).first()
+    print(tweet)
     db.close()
 
     if tweet:
@@ -96,6 +97,8 @@ async def get_tweet_by_id(tweet_id: int):
 async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
     cache_key = f"tweets:{limit}:{offset}"
     cached_tweets = await redis.get(cache_key)
+    
+    print(cached_tweets)
 
     if cached_tweets:
         return json.loads(cached_tweets)
@@ -105,13 +108,13 @@ async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
         {
             "id": tweet.id,
             "message": tweet.message,
-            "time_created": tweet.time_created,
+            "time_created": tweet.time_created.isoformat(),
             "username": tweet.user.username
         }
         for tweet in tweets
     ]
 
-    await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
+    await redis.set(cache_key, json.dumps(result), ex=3600)
     return result
 
 

@@ -1,34 +1,50 @@
 services:
+  redis:
+    image: redis:7
+    container_name: redis
+    expose:
+      - "6379"
+    networks:
+      - internal
+
   app1:
     build: ./backend
     environment:
       - DATABASE_URL=postgresql://zitter_user:rS8pJRd09meY0FtIPF8HQziOVYIZgUt0@dpg-d053ih6uk2gs73e7pomg-a.frankfurt-postgres.render.com/zitter  
       - SECRET_KEY=hamburgerdressing
-      - REDIS_URL=redis://localhost:6379
-    ports:
-      - "8000:8000"
+      - REDIS_URL=redis://redis:6379
+    expose:
+      - "8000"
+    networks:
+      - internal
+    depends_on:
+      - redis
 
   app2:
     build: ./backend
     environment:
       - DATABASE_URL=postgresql://zitter_user:rS8pJRd09meY0FtIPF8HQziOVYIZgUt0@dpg-d053ih6uk2gs73e7pomg-a.frankfurt-postgres.render.com/zitter
       - SECRET_KEY=hamburgerdressing
-      - REDIS_URL=redis://localhost:6379
-    ports:
-      - "8000:8000"
+      - REDIS_URL=redis://redis:6379
+    expose:
+      - "8000"
+    networks:
+      - internal
+    depends_on:
+      - redis
 
   app3:
     build: ./backend
     environment:
       - DATABASE_URL=postgresql://zitter_user:rS8pJRd09meY0FtIPF8HQziOVYIZgUt0@dpg-d053ih6uk2gs73e7pomg-a.frankfurt-postgres.render.com/zitter
       - SECRET_KEY=hamburgerdressing
-      - REDIS_URL=redis://localhost:6379
-    ports:
-      - "8000:8000"
-
-  redis:
-    image: redis:7
-    container_name: redis
+      - REDIS_URL=redis://redis:6379
+    expose:
+      - "8000"
+    networks:
+      - internal
+    depends_on:
+      - redis
 
   nginx:
     image: nginx:latest
@@ -37,10 +53,16 @@ services:
       - "8080:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    networks:
+      - internal 
     depends_on:
       - app1
       - app2
       - app3
+
+networks:
+  internal:
+    driver: bridge
 
   # frontend:
   #   build:

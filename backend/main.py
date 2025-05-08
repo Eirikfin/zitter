@@ -15,15 +15,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from middleware import log_requests
 
-
-
 http_bearer = HTTPBearer()
 
 Base.metadata.create_all(bind=engine)
 app = FastAPI()
-
-
-
 
 def get_token_from_header(authorization: str = Depends(http_bearer)):
     token = authorization.credentials
@@ -89,23 +84,23 @@ def read_root():
     return "Zitter API is live!"
 
 @app.get("/tweets/all")
-def getTweets(limit: int = 50, offset: int = 0, db: Session = Depends(get_db)):
-    return get_tweets(db, limit=limit, offset=offset)
+async def getTweets(limit: int = 50, offset: int = 0, db: Session = Depends(get_db)):
+    return await get_tweets(db, limit=limit, offset=offset)
 
 @app.get("/tweets/search")
-def search(query: str, db: Session = Depends(get_db)):
-    return search_tweets(query, db)
+async def search(query: str, db: Session = Depends(get_db)):
+    return await search_tweets(query, db)
 
 @app.get("/tweets/{tweet_id}", response_model=TweetResponse)
-def get_tweet(tweet_id: int):
-    tweet = get_tweet_by_id(tweet_id)
+async def get_tweet(tweet_id: int):
+    tweet = await get_tweet_by_id(tweet_id)
     if not tweet:
         raise HTTPException(status_code=404, detail="Tweet not found") 
     return tweet
 
 @app.post("/tweets", response_model=TweetCreate)
-def post_tweet(tweet: TweetCreate, token: str = Depends(get_token_from_header)):
-    return create_tweet(tweet, token)
+async def post_tweet(tweet: TweetCreate, token: str = Depends(get_token_from_header)):
+    return await create_tweet(tweet, token)
 
 @app.get("/logs")
 def returnLogs():
