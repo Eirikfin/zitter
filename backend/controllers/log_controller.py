@@ -11,6 +11,7 @@ def getLogs():
         except FileNotFoundError:
             db_accesses = 0
     return JSONResponse(content={
-        "api_calls": api_calls,
-        "db_accesses": db_accesses
+        "db_accesses": db_accesses,
+        "api_calls": api_calls
+       
     })

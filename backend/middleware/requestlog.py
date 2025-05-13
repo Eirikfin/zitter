@@ -2,15 +2,22 @@ from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
 import threading
 import os
+import datetime
 
 log_file = "logs.txt"
 db_count_file = "db_count.txt"
 file_lock = threading.Lock()
 
 async def log_requests(request: Request, call_next):
+    #the request method_
     method = request.method
+    #The route used in request
     path = request.url.path
-    log_entry = f"{method} {path}\n"
+    #Time the request was made:
+    now = datetime.datetime.now()
+    time = now.strftime("%Y-%m-%d %H:%M:%S")
+    #entry string for the logs
+    log_entry = f"{method} {path} {time}\n"
 
     with file_lock:
         with open(log_file, "a") as f:
