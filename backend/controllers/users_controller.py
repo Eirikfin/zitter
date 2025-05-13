@@ -4,6 +4,7 @@ from schemas import UserUpdate
 from fastapi import Depends, HTTPException, APIRouter
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
+from middleware import increment_db_access
 import bcrypt 
 
 
@@ -108,6 +109,9 @@ def getUser(db: Session, username: str):
             ]
         }
 
+        #increment db access
+        increment_db_access()
+
         return result
     except Exception as err:
         print(f"Error getting user: {str(err)}")
@@ -138,5 +142,8 @@ def searchUser(db: Session, query: str):
         {"id": user.id, "username": user.username, "joined": user.time_created}
         for user in users
     ]
+
+    #increment db access
+    increment_db_access()
 
     return result

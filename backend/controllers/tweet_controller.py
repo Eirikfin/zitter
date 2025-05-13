@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 import os
 import aioredis
 import asyncio
+from middleware import increment_db_access
 
 load_dotenv()
 
@@ -80,6 +81,9 @@ async def get_tweet_by_id(tweet_id: int):
     print(tweet)
     db.close()
 
+    #increment db access
+    increment_db_access()
+    
     if tweet:
         tweet_data = {
             "id": tweet.id,
@@ -113,6 +117,9 @@ async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
         }
         for tweet in tweets
     ]
+
+    #increment db access
+    increment_db_access()
 
     await redis.set(cache_key, json.dumps(result), ex=3600)
     return result
@@ -150,6 +157,9 @@ async def search_tweets(search_query: str, db: Session, limit: int = 50, offset:
         for tweet in tweets
     ]
 
+    #increment db access
+    increment_db_access()
+
     await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
     return result
 
@@ -164,6 +174,9 @@ async def get_hashtags(db: Session, limit: int = 50, offset: int = 0):
 
     tags = db.query(Hashtag).order_by(Hashtag.text.asc()).limit(limit).offset(offset).all()
     result = [{"id": tag.id, "text": tag.text} for tag in tags]
+
+    #increment db access
+    increment_db_access()
 
     await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
     return result
