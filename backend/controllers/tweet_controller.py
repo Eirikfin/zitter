@@ -12,6 +12,7 @@ import os
 import aioredis
 import asyncio
 from middleware import increment_db_access
+from fastapi import HTTPException
 
 load_dotenv()
 
@@ -180,3 +181,19 @@ async def get_hashtags(db: Session, limit: int = 50, offset: int = 0):
 
     await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
     return result
+
+
+async def like_tweet(db: Session, id: int):
+    tweet = db.query(Tweet).filter(Tweet.id == id).first()
+
+    if not tweet:
+        raise HTTPException(status_code=404, detail="Tweet was not found")
+
+    tweet.likes += 1
+
+    db.commit()
+    db.refresh(tweet)
+
+    return {"message": "Tweet was liked!", "likes": tweet.likes}
+
+    
