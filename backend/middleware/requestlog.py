@@ -29,9 +29,11 @@ async def log_requests(request: Request, call_next):
 
 def increment_db_access():
     with file_lock:
+        #check if the file exists first, if not create is and write 0:
         if not os.path.exists(db_count_file):
             with open(db_count_file, "w") as f:
                 f.write("0")
+       # Open the file, read the count, increment it by 1, and write it back:
         with open(db_count_file, "r+") as f:
             count = int(f.read())
             f.seek(0)
