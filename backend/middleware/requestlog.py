@@ -24,7 +24,7 @@ async def log_requests(request: Request, call_next):
         db.add(log_entry)
         db.commit()
     finally:
-        db.remove()  # ← Important: use .remove() for scoped_session cleanup
+        db.remove()
 
     response = await call_next(request)
     return response
