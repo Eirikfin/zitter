@@ -1,5 +1,5 @@
 from config.db import engine, Base
-from models import User, Tweet, Hashtag
+from models import User, Tweet, Hashtag, Log, Db_Accessed
 from models.tweet_hashtag_model import tweet_hashtags
 
 import logging
