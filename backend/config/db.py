@@ -7,7 +7,7 @@ from models.base import Base
 
 # Load .env
 load_dotenv()
-print("DATABASE_URL from .env:", os.getenv("DATABASE_URL"))
+print("DATABASE_URL from .env (raw):", repr(os.getenv("DATABASE_URL")))
 
 # Get database URL
 DB_URL = os.getenv("DATABASE_URL")

@@ -6,6 +6,7 @@ from controllers.log_controller import getLogs
 from config.db import SessionLocal
 from config.db import engine
 from models.base import Base
+from cache.like_batcher import lifespan
 
 from schemas.tweet_schema import TweetResponse, TweetCreate
 from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets, search_tweets, get_hashtags
@@ -14,6 +15,8 @@ from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from middleware import log_requests
+from controllers.tweet_controller import get_total_likes
+from cache.like_batcher import batch_like
 
 http_bearer = HTTPBearer()
 
@@ -45,6 +48,8 @@ app.add_middleware(
 )
 
 app.middleware("http")(log_requests)
+
+app = FastAPI(lifespan=lifespan)
 
 #log in:
 @app.post("/login")
@@ -107,5 +112,12 @@ async def post_tweet(tweet: TweetCreate, token: str = Depends(get_token_from_hea
 def returnLogs():
     return getLogs()
 
+@app.get("/likes/{tweet_id}")
+async def get_likes_endpoint(tweet_id: int, db: Session = Depends(get_db)):
+    return await get_total_likes(db, tweet_id)
 
+@app.post("/likes/{tweet_id}")
+async def like_tweet(tweet_id: int):
+    batch_like(tweet_id)
+    return {"message": f"Like registered for tweet {tweet_id}"}
 

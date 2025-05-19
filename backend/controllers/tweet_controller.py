@@ -9,10 +9,12 @@ from sqlalchemy.orm import Session
 from middleware import decode_token
 from dotenv import load_dotenv
 import os
-import aioredis
+import redis.asyncio as aioredis
 import asyncio
 from middleware import increment_db_access
 from fastapi import HTTPException
+from cache.like_batcher import batch_like
+from cache.like_batcher import like_buffer, db_access_counter
 
 load_dotenv()
 
@@ -189,11 +191,28 @@ async def like_tweet(db: Session, id: int):
     if not tweet:
         raise HTTPException(status_code=404, detail="Tweet was not found")
 
-    tweet.likes += 1
-
-    db.commit()
-    db.refresh(tweet)
+    batch_like(tweet.id)
 
     return {"message": "Tweet was liked!", "likes": tweet.likes}
 
-    
+
+
+
+async def get_total_likes(db: Session, tweet_id: int):
+    tweet = db.query(Tweet).filter(Tweet.id == tweet_id).first()
+
+    if not tweet:
+        raise HTTPException(status_code=404, detail="Tweet not found")
+
+    db_likes = tweet.likes
+    db_access_counter["reads"] += 1
+
+    # Likes still in the buffer (not yet flushed)
+    buffered_likes = like_buffer[tweet_id]["likes"]
+
+    return {
+        "tweet_id": tweet_id,
+        "likes_total": db_likes + buffered_likes,
+        "likes_from_db": db_likes,
+        "likes_from_buffer": buffered_likes
+    }
