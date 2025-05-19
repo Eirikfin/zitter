@@ -1,6 +1,8 @@
 from fastapi.responses import JSONResponse
-from middleware.requestlog import file_lock, log_file, db_count_file
+from models import Db_Accessed, Log
+from config.db import SessionLocal
 
+"""
 def getLogs():
     with file_lock:
         with open(log_file, "r") as f:
@@ -15,3 +17,26 @@ def getLogs():
         "api_calls": api_calls
        
     })
+"""
+
+
+def getLogs():
+    db = SessionLocal
+    try:
+        db_amount = db.query(Db_Accessed).first()
+        logs = db.query(Log).all()
+
+        result = {
+            "times_db_was_accessed": db_amount.amount if db_amount else 0,
+            "logs": [
+                {
+                    "method": log.method,
+                    "url": log.url,
+                    "time": log.time
+                } for log in logs
+            ]
+        }
+
+        return result
+    finally:
+        db.remove()
