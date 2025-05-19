@@ -71,6 +71,8 @@ def create_tweet(tweet_data: TweetCreate, token: str):
         db.close()
 
 
+from sqlalchemy.orm import joinedload
+
 # Retrieve a tweet by ID
 async def get_tweet_by_id(tweet_id: int):
     cache_key = f"tweet:{tweet_id}"
@@ -80,24 +82,29 @@ async def get_tweet_by_id(tweet_id: int):
         return json.loads(cached_tweet)
 
     db = SessionLocal()
-    tweet = db.query(Tweet).filter(Tweet.id == tweet_id).first()
-    print(tweet)
-    db.close()
+    try:
+        tweet = (
+            db.query(Tweet)
+            .options(joinedload(Tweet.user))  # Eager-load the user relationship
+            .filter(Tweet.id == tweet_id)
+            .first()
+        )
 
-    #increment db access
-    increment_db_access()
-    
-    if tweet:
-        tweet_data = {
-            "id": tweet.id,
-            "message": tweet.message,
-            "time_created": tweet.time_created,
-            "username": tweet.user.username,
-        }
-        await redis.set(cache_key, json.dumps(tweet_data), ex=3600)  # Cache for 1 hour
-        return tweet_data
+        increment_db_access()
 
-    return None
+        if tweet:
+            tweet_data = {
+                "id": tweet.id,
+                "message": tweet.message,
+                "time_created": tweet.time_created.isoformat(),
+                "username": tweet.user.username,
+            }
+            await redis.set(cache_key, json.dumps(tweet_data), ex=3600)
+            return tweet_data
+        return None
+    finally:
+        db.close()
+
 
 
 # Get all tweets with pagination

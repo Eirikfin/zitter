@@ -21,7 +21,7 @@ from cache.like_batcher import batch_like
 http_bearer = HTTPBearer()
 
 Base.metadata.create_all(bind=engine)
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 def get_token_from_header(authorization: str = Depends(http_bearer)):
     token = authorization.credentials
@@ -49,7 +49,7 @@ app.add_middleware(
 
 app.middleware("http")(log_requests)
 
-app = FastAPI(lifespan=lifespan)
+
 
 #log in:
 @app.post("/login")

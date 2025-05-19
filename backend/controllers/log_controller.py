@@ -23,7 +23,7 @@ def getLogs():
 def getLogs():
     db = SessionLocal
     try:
-        db_amount = db.query(Db_accessed).first()
+        db_amount = db.query(Db_Accessed).first()
         logs = db.query(Log).all()
 
         result = {
@@ -31,8 +31,8 @@ def getLogs():
             "logs": [
                 {
                     "method": log.method,
-                    "path": log.path,
-                    "time": log.time.strftime("%Y-%m-%d %H:%M:%S")
+                    "url": log.url,
+                    "time": log.time
                 } for log in logs
             ]
         }
