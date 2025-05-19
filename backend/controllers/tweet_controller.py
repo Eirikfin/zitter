@@ -110,6 +110,9 @@ async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
     if cached_tweets:
         return json.loads(cached_tweets)
 
+     #increment db access
+    increment_db_access()
+
     tweets = db.query(Tweet).options(joinedload(Tweet.user)).order_by(desc(Tweet.id)).limit(limit).offset(offset).all()
     result = [
         {
@@ -121,8 +124,7 @@ async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
         for tweet in tweets
     ]
 
-    #increment db access
-    increment_db_access()
+   
 
     await redis.set(cache_key, json.dumps(result), ex=3600)
     return result
