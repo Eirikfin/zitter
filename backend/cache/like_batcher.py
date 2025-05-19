@@ -2,22 +2,18 @@ import time
 from middleware import increment_db_access
 from config.db import SessionLocal
 from models import Tweet
-from collections import defaultdict # defaultdict is a dictionary subclass that calls a factory function to supply missing values
+from collections import defaultdict
 import threading
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
-# like_buffer is a dictionary to store the number of likes and the last update time for each tweet
+
 # like buffer stores temporary like data in memory before flushing it to the database.
-# Key = tweet_id
-# Value = dictionary with
-# -"like": number of new (unwritten) likes
-# - "last update" last time this tweet's like were written to the DB
 like_buffer = defaultdict(lambda: {"likes": 0, "last_update": time.time()}) 
 
 # db_access_counter tracks the number of reads and writest to the database.
 # Used later for API log reporting (/logs)
-db_access_counter = {"reads": 0, "writes": 0} # db_access_counter is a dictionary to store the number of reads and writes to the database
+db_access_counter = {"reads": 0, "writes": 0}
 
 
 def batch_like(tweet_id: int):
@@ -27,9 +23,8 @@ def batch_like(tweet_id: int):
     buffer["likes"] += 1 #increase like count in memory
     
     # Flush triggers:
-    # 1. if the tweet has 10 or more buffered likes 
+    #1. if the tweet has 10 or more buffered likes 
     #2. or its been more than 60 seconds sinvr last DB write (for low-liked tweets)
-    
     if buffer["likes"] >= 10 or (now - buffer["last_update"]) >= 60:
         flush_likes_to_db(tweet_id)
         buffer["last_update"] = now
@@ -74,16 +69,23 @@ def flush_likes_to_db(tweet_id: int):
 def flush_old_likes():
     while True:
         now = time.time()
+        # loops through all tweets currently being tracked in the buffer
         for tweet_id, buffer in like_buffer.items():
+            # if there are pending likes and it has been more than 60s since last db write:
             if buffer["likes"] > 0 and (now - buffer["last_update"]) >= 60:
                 print(f"[AUTO FLUSH] Flushing tweet {tweet_id} due to timeout.")
                 flush_likes_to_db(tweet_id)
                 buffer["last_update"] = now
         time.sleep(10)  # Checks every 10 seconds
         
+       
+        # we use FastAPI lifespan event to start our flush_old_likes function when the app starts 
+        #and keep it running continuously so the likes dont get "stuck" with no new likes after 60s
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    threading.Thread(target=flush_old_likes, daemon=True).start()
+    # launches the flush function in a separate background thread
+    threading.Thread(target=flush_old_likes, daemon=True).start() 
     yield
 
+# ensure it the background thread begins at startup
 app = FastAPI(lifespan=lifespan)
