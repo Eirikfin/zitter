@@ -31,6 +31,7 @@ async def log_requests(request: Request, call_next):
 
 
 def increment_db_access():
+
     db = SessionLocal
 
     try:
@@ -48,8 +49,3 @@ def increment_db_access():
 
     finally:
         db.remove()  # clean up session
-
-
-
-
-
