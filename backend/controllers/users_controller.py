@@ -50,13 +50,13 @@ def updateUser(db: Session, username: str, req: UserUpdate):
         db.commit()
         db.refresh(user)
 
-        user = {
+        user_data = {
             "username": user.username,
             "email": user.email,
             "joined": user.time_created
         }
 
-        return {"message": "User updated successfully", "user": user}
+        return {"message": "User updated successfully", "user": user_data}
     except Exception as err:
         db.rollback()
         print(f"Error updating user: {str(err)}")  # Log the error for debugging
