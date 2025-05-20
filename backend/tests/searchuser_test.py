@@ -1,14 +1,17 @@
 import sys
 import os
+import pytest
+from unittest.mock import MagicMock, patch
+from fastapi import HTTPException
 
+#setting root directory to the backend directory
 sys.path.append(os.path.abspath(os.path.dirname(__file__) + "/.."))
 
 from models import User
 from middleware import increment_db_access
 from controllers import searchUser
-import pytest
-from unittest.mock import MagicMock, patch
-from fastapi import HTTPException
+
+
 
 def test_search_user_success():
     # mock user instance
@@ -44,3 +47,4 @@ def test_search_user_not_found():
 
     assert exc_info.value.status_code == 404
     assert exc_info.value.detail == "no users was found"
+
