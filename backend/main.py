@@ -103,16 +103,11 @@ async def get_tweet(tweet_id: int):
         raise HTTPException(status_code=404, detail="Tweet not found") 
     return tweet
 
-@app.post("/tweets", response_model=TweetCreate)
+@app.post("/tweets", response_model=TweetResponse)
 async def post_tweet(tweet: TweetCreate, token: str = Depends(get_token_from_header)):
-    result = create_tweet(tweet, token)
-    # Invalidate cache for tweets and hashtags in async context
-    try:
-        await redis.delete("tweets")
-        await redis.delete("hashtags")
-    except Exception as e:
-        print(f"Warning: Failed to invalidate cache: {e}")
-    return result
+    created_tweet = await create_tweet(tweet, token)
+    return created_tweet
+
 
 @app.get("/logs")
 def returnLogs():

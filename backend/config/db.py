@@ -1,9 +1,12 @@
 import os
 from dotenv import load_dotenv
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import sessionmaker, scoped_session, declarative_base
-from models.base import Base
-
+import time
+import logging
+import sys
+from pythonjsonlogger import jsonlogger
+from models.base import Base  # keep your existing import
 
 # Load .env
 load_dotenv()
@@ -16,12 +19,41 @@ if not DB_URL:
 
 connect_args = {"check_same_thread": False} if DB_URL.startswith("sqlite") else {}
 
+# Setup DB logger
+logger = logging.getLogger("fastapi.db")
+logger.setLevel(logging.INFO)
+log_handler = logging.StreamHandler(sys.stdout)
+formatter = jsonlogger.JsonFormatter()
+log_handler.setFormatter(formatter)
+logger.addHandler(log_handler)
+
+def setup_sqlalchemy_logging(engine):
+    @event.listens_for(engine, "before_cursor_execute")
+    def before_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+        conn.info.setdefault('query_start_time', []).append(time.time())
+
+    @event.listens_for(engine, "after_cursor_execute")
+    def after_cursor_execute(conn, cursor, statement, parameters, context, executemany):
+        start_time = conn.info['query_start_time'].pop(-1)
+        duration_ms = round((time.time() - start_time) * 1000, 2)
+        logger.info(
+            "db_query",
+            extra={
+                "type": "db_call",
+                "statement": statement,
+                "parameters": parameters,
+                "duration_ms": duration_ms,
+            }
+        )
+
+# Create engine and setup logging
 engine = create_engine(DB_URL, connect_args=connect_args)
+setup_sqlalchemy_logging(engine)
 
 # Create session
 SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
 
-# Base class for models
+# Base class for models (keep your existing Base)
 Base = declarative_base()
 
 # Test DB connection

@@ -13,11 +13,8 @@ scrape_configs:
     docker_sd_configs:
       - host: unix:///var/run/docker.sock
         refresh_interval: 10s
-    relabel_configs:
-      - source_labels: [__meta_docker_container_label_com_docker_compose_service]
-        regex: app[1-5]
-        action: keep
 
+    relabel_configs:
       - source_labels: [__meta_docker_container_name]
         target_label: container
 
@@ -31,14 +28,11 @@ scrape_configs:
         target_label: __log_stream__
 
       - source_labels: [__meta_docker_container_name]
-        regex: '.*(app[1-5]).*'
-        target_label: app
-        replacement: '$1'
+        target_label: container
 
       - action: replace
         target_label: job
         replacement: fastapi
-
 
     pipeline_stages:
       - json:

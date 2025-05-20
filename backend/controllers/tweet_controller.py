@@ -28,7 +28,7 @@ def extract_hashtags(text: str):
     return set(re.findall(r"#(\w+)", text))  # Extract words after #
 
 # Create a new tweet
-def create_tweet(tweet_data: TweetCreate, token: str):
+async def create_tweet(tweet_data: TweetCreate, token: str):
     db = SessionLocal()
     payload = decode_token(token, secret_key)
     user_id = payload["id"]
@@ -57,9 +57,8 @@ def create_tweet(tweet_data: TweetCreate, token: str):
         db.commit()
         db.refresh(new_tweet)
 
-        # Invalidate cache for tweets and hashtags
-        asyncio.create_task(redis.delete("tweets"))
-        asyncio.create_task(redis.delete("hashtags"))
+        await redis.delete("tweets")
+        await redis.delete("hashtags")
 
         return new_tweet
 
@@ -68,9 +67,6 @@ def create_tweet(tweet_data: TweetCreate, token: str):
         raise e
     finally:
         db.close()
-
-
-
 
 # Retrieve a tweet by ID
 async def get_tweet_by_id(tweet_id: int):
@@ -102,7 +98,6 @@ async def get_tweet_by_id(tweet_id: int):
         return None
     finally:
         db.close()
-        increment_db_access()
 
 
 
@@ -126,8 +121,6 @@ async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
         }
         for tweet in tweets
     ]
-
-   
 
     await redis.set(cache_key, json.dumps(result), ex=3600)
     return result
@@ -165,7 +158,7 @@ async def search_tweets(search_query: str, db: Session, limit: int = 50, offset:
         for tweet in tweets
     ]
 
-    await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
+    await redis.set(cache_key, json.dumps(result), ex=3600)
     return result
 
 

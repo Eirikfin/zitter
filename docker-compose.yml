@@ -54,51 +54,6 @@ services:
     labels:
       monitoring: "true"
 
-  app4:
-    build: ./backend
-    environment:
-      - DATABASE_URL=postgresql://postgres:toor@host.docker.internal:5432/zitter
-      - SECRET_KEY=hamburgerdressing
-      - REDIS_URL=redis://redis:6379
-    expose:
-      - "8000"
-    networks:
-      - internal
-    depends_on:
-      - redis
-    labels: 
-      monitoring: "true"
-
-  app5:
-    build: ./backend
-    environment:
-      - DATABASE_URL=postgresql://postgres:toor@host.docker.internal:5432/zitter
-      - SECRET_KEY=hamburgerdressing
-      - REDIS_URL=redis://redis:6379
-    expose:
-      - "8000"
-    networks:
-      - internal
-    depends_on:
-      - redis
-    labels: 
-      monitoring: "true"
-
-  app6:
-    build: ./backend
-    environment:
-      - DATABASE_URL=postgresql://postgres:toor@host.docker.internal:5432/zitter
-      - SECRET_KEY=hamburgerdressing
-      - REDIS_URL=redis://redis:6379
-    expose:
-      - "8000"
-    networks:
-      - internal
-    depends_on:
-      - redis
-    labels: 
-      monitoring: "true"
-
   nginx:
     image: nginx:latest
     container_name: nginx
@@ -127,9 +82,5 @@ networks:
 #    - "3000:80"
 #  depends_on:
 #    - nginx
-
-
-
-
 
 # postgresql://zitter_user:rS8pJRd09meY0FtIPF8HQziOVYIZgUt0@dpg-d053ih6uk2gs73e7pomg-a.frankfurt-postgres.render.com/zitter
