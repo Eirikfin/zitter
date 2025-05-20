@@ -11,7 +11,6 @@ from dotenv import load_dotenv
 import os
 import redis.asyncio as aioredis
 import asyncio
-from middleware import increment_db_access
 from fastapi import HTTPException
 from cache.like_batcher import batch_like
 from cache.like_batcher import like_buffer, db_access_counter
@@ -96,8 +95,6 @@ async def get_tweet_by_id(tweet_id: int):
             .first()
         )
 
-        increment_db_access()
-
         if tweet:
             tweet_data = {
                 "id": tweet.id,
@@ -122,8 +119,6 @@ async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
 
     if cached_tweets:
         return json.loads(cached_tweets)
-
-    increment_db_access()
 
     tweets = db.query(Tweet).options(joinedload(Tweet.user)).order_by(desc(Tweet.id)).limit(limit).offset(offset).all()
     result = [
@@ -173,9 +168,6 @@ async def search_tweets(search_query: str, db: Session, limit: int = 50, offset:
         for tweet in tweets
     ]
 
-    #increment db access
-    increment_db_access()
-
     await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
     return result
 
@@ -190,9 +182,6 @@ async def get_hashtags(db: Session, limit: int = 50, offset: int = 0):
 
     tags = db.query(Hashtag).order_by(Hashtag.text.asc()).limit(limit).offset(offset).all()
     result = [{"id": tag.id, "text": tag.text} for tag in tags]
-
-    #increment db access
-    increment_db_access()
 
     await redis.set(cache_key, json.dumps(result), ex=3600)  # Cache for 1 hour
     return result

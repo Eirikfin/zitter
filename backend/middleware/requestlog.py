@@ -1,51 +1,37 @@
-from fastapi import FastAPI, Request
-from fastapi.responses import JSONResponse
-import threading
-import os
-import datetime
-from models import Log, Db_Accessed
-from sqlalchemy import desc
-from sqlalchemy.orm import Session
 from fastapi import Request
-from config.db import SessionLocal 
-#log_file = "logs.txt"
-#db_count_file = "db_count.txt"
-#file_lock = threading.Lock()
-async def log_requests(request: Request, call_next):
-    db = SessionLocal()
+import time
+import logging
+import sys
+from pythonjsonlogger import jsonlogger
 
-    try:
-        now = datetime.datetime.now()
-        log_entry = Log(
-            method=request.method,
-            url=request.url.path,
-            time=now.strftime("%Y-%m-%d %H:%M:%S")
-        )
-        db.add(log_entry)
-        db.commit()
-    finally:
-        db.close()
+# Define your own logger
+logger = logging.getLogger("fastapi.request")
+logger.setLevel(logging.INFO)
+log_handler = logging.StreamHandler(sys.stdout)
+formatter = jsonlogger.JsonFormatter()
+log_handler.setFormatter(formatter)
+logger.addHandler(log_handler)
+
+async def log_requests(request: Request, call_next):
+    start_time = time.time()
 
     response = await call_next(request)
+
+    process_time = round((time.time() - start_time) * 1000, 2)
+    client_ip = request.client.host
+    user_agent = request.headers.get("user-agent", "unknown")
+
+    log_data = {
+        "type": "request",
+        "method": request.method,
+        "path": request.url.path,
+        "status_code": response.status_code,
+        "duration_ms": process_time,
+        "client_ip": client_ip,
+        "user_agent": user_agent,
+    }
+
+    # Log with structured message
+    logger.info("request", extra=log_data)
+
     return response
-
-
-def increment_db_access():
-
-    db = SessionLocal
-
-    try:
-        amount = db.query(Db_Accessed).first()
-
-        if amount is None:
-            # If no entry exists, create one
-            amount = Db_Accessed(amount=1)
-            db.add(amount)
-        else:
-            amount.amount += 1
-
-        db.commit()
-        db.refresh(amount)
-
-    finally:
-        db.remove()  # clean up session

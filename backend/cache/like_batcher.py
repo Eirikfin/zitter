@@ -1,5 +1,4 @@
 import time
-from middleware import increment_db_access
 from config.db import SessionLocal
 from models import Tweet
 from collections import defaultdict
@@ -49,7 +48,6 @@ def flush_likes_to_db(tweet_id: int):
             tweet.likes += buffered_likes # add buffered like to the current value in DB
             db.commit() # save changes
             db.refresh(tweet) # refresh the tweet object with latest db state
-            increment_db_access() #log that we did a DB write (for /logs)
             
             print(f"[DB WRITE] tweet {tweet_id} upadate with +{buffered_likes} likes") 
             
