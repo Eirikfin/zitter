@@ -57,15 +57,9 @@ def create_tweet(tweet_data: TweetCreate, token: str):
         db.commit()
         db.refresh(new_tweet)
 
-        # Invalidate cache for tweets and hashtags, ignore errors
-        try:
-            asyncio.run(redis.delete("tweets"))
-        except Exception as e:
-            print(f"Warning: Failed to invalidate tweets cache: {e}")
-        try:
-            asyncio.run(redis.delete("hashtags"))
-        except Exception as e:
-            print(f"Warning: Failed to invalidate hashtags cache: {e}")
+        # Invalidate cache for tweets and hashtags
+        asyncio.create_task(redis.delete("tweets"))
+        asyncio.create_task(redis.delete("hashtags"))
 
         return new_tweet
 
@@ -76,7 +70,7 @@ def create_tweet(tweet_data: TweetCreate, token: str):
         db.close()
 
 
-from sqlalchemy.orm import joinedload
+
 
 # Retrieve a tweet by ID
 async def get_tweet_by_id(tweet_id: int):
@@ -90,7 +84,7 @@ async def get_tweet_by_id(tweet_id: int):
     try:
         tweet = (
             db.query(Tweet)
-            .options(joinedload(Tweet.user))  # Eager-load the user relationship
+            .options(joinedload(Tweet.user))
             .filter(Tweet.id == tweet_id)
             .first()
         )
@@ -101,12 +95,14 @@ async def get_tweet_by_id(tweet_id: int):
                 "message": tweet.message,
                 "time_created": tweet.time_created.isoformat(),
                 "username": tweet.user.username,
+                "user_id": tweet.user.id,
             }
             await redis.set(cache_key, json.dumps(tweet_data), ex=3600)
             return tweet_data
         return None
     finally:
         db.close()
+        increment_db_access()
 
 
 
@@ -131,6 +127,7 @@ async def get_tweets(db: Session, limit: int = 50, offset: int = 0):
         for tweet in tweets
     ]
 
+   
 
     await redis.set(cache_key, json.dumps(result), ex=3600)
     return result
@@ -161,7 +158,7 @@ async def search_tweets(search_query: str, db: Session, limit: int = 50, offset:
         {
             "id": tweet.id,
             "message": tweet.message,
-            "time_created": tweet.time_created,
+            "time_created": tweet.time_created.isoformat(),
             "username": tweet.user.username,
             "hashtags": [h.text for h in tweet.hashtags]
         }

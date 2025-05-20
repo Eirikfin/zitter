@@ -1,1 +1,1 @@
-from controllers.users_controller import createUser
+from controllers.users_controller import createUser, searchUser
