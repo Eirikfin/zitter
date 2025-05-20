@@ -9,7 +9,7 @@ from models.base import Base
 from cache.like_batcher import lifespan
 
 from schemas.tweet_schema import TweetResponse, TweetCreate
-from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets, search_tweets, get_hashtags
+from controllers.tweet_controller import create_tweet, get_tweet_by_id, get_tweets, search_tweets, get_hashtags, redis
 from controllers.login_controller import logInUser
 from fastapi import HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -48,7 +48,6 @@ app.add_middleware(
 )
 
 app.middleware("http")(log_requests)
-
 
 
 #log in:
@@ -106,7 +105,14 @@ async def get_tweet(tweet_id: int):
 
 @app.post("/tweets", response_model=TweetCreate)
 async def post_tweet(tweet: TweetCreate, token: str = Depends(get_token_from_header)):
-    return await create_tweet(tweet, token)
+    result = create_tweet(tweet, token)
+    # Invalidate cache for tweets and hashtags in async context
+    try:
+        await redis.delete("tweets")
+        await redis.delete("hashtags")
+    except Exception as e:
+        print(f"Warning: Failed to invalidate cache: {e}")
+    return result
 
 @app.get("/logs")
 def returnLogs():

@@ -6,6 +6,8 @@ services:
       - "6379"
     networks:
       - internal
+    labels:
+      monitoring: "true"
 
   app1:
     build: ./backend
@@ -19,6 +21,8 @@ services:
       - internal
     depends_on:
       - redis
+    labels: 
+      monitoring: "true"
 
   app2:
     build: ./backend
@@ -32,6 +36,8 @@ services:
       - internal
     depends_on:
       - redis
+    labels:
+      monitoring: "true"
 
   app3:
     build: ./backend
@@ -45,6 +51,8 @@ services:
       - internal
     depends_on:
       - redis
+    labels:
+      monitoring: "true"
 
   nginx:
     image: nginx:latest
@@ -59,6 +67,8 @@ services:
       - app1
       - app2
       - app3
+    labels:
+      monitoring: "true"
 
 networks:
   internal:
